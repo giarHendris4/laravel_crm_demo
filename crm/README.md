@@ -9,7 +9,7 @@ A multi-tenant role-based Lead Distribution & CRM System built with Laravel & Ta
 - **Interactive Analytics Dashboard:** Real-time summary cards and sales conversion reports.
 
 # Tech Stack
-- **Backend:** Laravel 13
+- **Backend:** Laravel 13 php(8.2+)
 - **Frontend:** Blade, Tailwind CSS, Alpine.js
 - **Database:** PostgreSQL / MySQL
 - **Authentication:** Laravel Breeze & Custom Middleware
