@@ -1,18 +1,27 @@
 # Custom CRM & Lead Management System (Laravel)
 
-A multi-tenant role-based Lead Distribution & CRM System built with Laravel & Tailwind CSS. Designed for managing sales pipelines, partner companies, and lead assignments.
-
-# Key Features
-- **Role-Based Access Control (RBAC):** Dedicated portals for Administrators, Sales Representatives, and Partner Companies.
-- **Lead Distribution:** Manual lead assignment from Admin to single or multiple Partners.
-- **Strict Data Isolation:** Custom Laravel Authorization Policies ensuring Partner Companies only access assigned leads.
-- **Interactive Analytics Dashboard:** Real-time summary cards and sales conversion reports.
+# Features
+- Role-Based Access Control (RBAC)
+- Lead Distribution (manual assignment)
+- Strict Data Isolation
+- Interactive Analytics Dashboard
 
 # Tech Stack
-- **Backend:** Laravel 13 php(8.3+)
-- **Frontend:** Blade, Tailwind CSS, Alpine.js
-- **Database:** PostgreSQL / MySQL
-- **Authentication:** Laravel Breeze & Custom Middleware
+- Backend: Laravel 13, PHP 8.3+
+- Frontend: Blade, Tailwind CSS, Alpine.js
+- Database: PostgreSQL / MySQL
+- Authentication: Laravel Breeze & Custom Middleware
+
+# Installation
+```bash
+git clone https://github.com/username/repo.git
+cd repo
+composer install
+npm install && npm run dev
+cp .env.example .env
+php artisan migrate --seed
+php artisan serve
+
 
 # Demo Credentials (For Testing)
 | Role | Email | Password |
