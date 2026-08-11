@@ -14,7 +14,7 @@
 
 # Installation
 ```bash
-git clone https://github.com/username/repo.git
+git clone git@github.com:giarHendris4/laravel_crm_demo.git
 cd repo
 composer install
 npm install && npm run dev
