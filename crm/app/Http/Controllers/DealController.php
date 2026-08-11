@@ -3,16 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deal;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class DealController extends Controller
 {
     public function index()
-    {
-        $deals = Deal::where('user_id', auth()->id())->get();
+{
+    $user = Auth::user();
 
-        return view('deals.index', compact('deals'));
-    }
+    $deals = $user->role === 'admin' 
+        ? Deal::with(['user', 'lead'])->get() 
+        : Deal::where('user_id', $user->id)->with('lead')->get();
+
+    return view('deals.index', compact('deals'));
+}
 
     public function store(Request $request)
     {
@@ -24,7 +29,7 @@ class DealController extends Controller
             'expected_close_date' => 'required|date',
         ]);
 
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = Auth::id();
 
         Deal::create($validated);
 
@@ -34,7 +39,7 @@ class DealController extends Controller
     public function update(Request $request, Deal $deal)
     {
         // Proteksi Otorisasi: Hanya pemilik deal / admin yang boleh update
-        if (auth()->id() !== $deal->user_id && auth()->user()->role !== 'admin') {
+        if (Auth::id() !== $deal->user_id && Auth::user()->role !== 'admin') {
             abort(403);
         }
 

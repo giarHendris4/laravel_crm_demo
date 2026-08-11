@@ -63,6 +63,7 @@ class DealManagementTest extends TestCase
             'stage' => 'qualification',
         ]);
     }
+
     #[Test]
     public function test_sales_dapat_mengupdate_stage_deal_miliknya()
     {
@@ -107,5 +108,61 @@ class DealManagementTest extends TestCase
         ]);
 
         $response->assertStatus(403);
+    }
+
+    #[Test]
+    public function test_admin_dapat_melihat_semua_deal_dari_seluruh_sales()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $salesLain = User::factory()->create(['role' => 'sales']);
+
+        Deal::create([
+            'user_id' => $this->sales->id,
+            'lead_id' => $this->lead->id,
+            'title' => 'Deal Sales Utama',
+            'deal_value' => 10000000,
+            'stage' => 'qualification',
+            'expected_close_date' => now()->addDays(7)->format('Y-m-d'),
+        ]);
+
+        Deal::create([
+            'user_id' => $salesLain->id,
+            'lead_id' => $this->lead->id,
+            'title' => 'Deal Sales Lain',
+            'deal_value' => 20000000,
+            'stage' => 'proposal',
+            'expected_close_date' => now()->addDays(14)->format('Y-m-d'),
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('deals.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Deal Sales Utama');
+        $response->assertSee('Deal Sales Lain');
+    }
+
+    #[Test]
+    public function test_admin_dapat_mengupdate_deal_milik_sales_manapun()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $dealSales = Deal::create([
+            'user_id' => $this->sales->id,
+            'lead_id' => $this->lead->id,
+            'title' => 'Deal Kontrak Tahunan',
+            'deal_value' => 50000000,
+            'stage' => 'negotiation',
+            'expected_close_date' => now()->addDays(10)->format('Y-m-d'),
+        ]);
+
+        $response = $this->actingAs($admin)->patch(route('deals.update', $dealSales), [
+            'stage' => 'closed_won',
+        ]);
+
+        $response->assertRedirect(route('deals.index'));
+        $this->assertDatabaseHas('deals', [
+            'id' => $dealSales->id,
+            'stage' => 'closed_won',
+        ]);
     }
 }
