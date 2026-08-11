@@ -9,6 +9,7 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\Partner\DashboardController as PartnerDashboard;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
+use App\Http\Controllers\ActivityController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -57,6 +58,10 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('deals', DealController::class);
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('activities', [ActivityController::class, 'store'])->name('activities.store');
 });
 
 require __DIR__.'/auth.php';

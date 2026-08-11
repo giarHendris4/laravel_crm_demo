@@ -56,6 +56,14 @@ class LeadController extends Controller
         return redirect()->route('leads.index')->with('success', 'Lead berhasil ditambahkan!');
     }
 
+    // Show Lead
+    public function show(Lead $lead)
+    {
+        $lead->load('activities.user');
+
+        return view('leads.show', compact('lead'));
+    }
+
     /**
      * Form edit lead.
      */
