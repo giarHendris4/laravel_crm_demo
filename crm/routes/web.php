@@ -11,6 +11,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LeadAssignmentController;
+use App\Http\Controllers\Partner\LeadController as PartnerLeadController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -68,5 +70,18 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 });
+
+Route::middleware(['auth'])->group(function () {
+    // Admin Lead Assignment
+    Route::post('/lead-assignments', [LeadAssignmentController::class, 'store'])->name('lead-assignments.store');
+
+    // Portal Partner
+    Route::get('/partner/leads', [PartnerLeadController::class, 'index'])->name('partner.leads.index');
+
+    // Portal Partner
+    Route::get('/partner/leads', [PartnerLeadController::class, 'index'])->name('partner.leads.index');
+    Route::patch('/partner/leads/{lead}/status', [PartnerLeadController::class, 'updateStatus'])->name('partner.leads.update-status');
+});
+
 
 require __DIR__.'/auth.php';

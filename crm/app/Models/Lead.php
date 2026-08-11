@@ -33,4 +33,11 @@ class Lead extends Model
     {
         return $this->hasMany(Activity::class);
     }
+
+    public function partners()
+    {
+        return $this->belongsToMany(User::class, 'lead_assignments', 'lead_id', 'partner_id')
+                    ->withPivot('assigned_by', 'notes')
+                    ->withTimestamps();
+    }
 }

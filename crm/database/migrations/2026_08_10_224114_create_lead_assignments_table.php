@@ -6,20 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('lead_assignments', function (Blueprint $table) {
             $table->id();
+            
+            // Foreign keys
+            $table->foreignId('lead_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('partner_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('assigned_by')->nullable()->constrained('users')->nullOnDelete();
+            
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('lead_assignments');

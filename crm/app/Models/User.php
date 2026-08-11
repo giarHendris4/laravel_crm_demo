@@ -42,4 +42,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Lead::class);
     }
+
+    public function assignedLeads()
+    {
+        return $this->belongsToMany(Lead::class, 'lead_assignments', 'partner_id', 'lead_id')
+                    ->withPivot('assigned_by', 'notes')
+                    ->withTimestamps();
+    }
 }
