@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\Partner\DashboardController as PartnerDashboard;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
@@ -44,6 +45,11 @@ Route::middleware(['auth', 'role:sales'])->prefix('sales')->name('sales.')->grou
 // Route untuk Partner
 Route::middleware(['auth', 'role:partner'])->prefix('partner')->name('partner.')->group(function () {
     Route::get('/dashboard', [PartnerDashboard::class, 'index'])->name('dashboard');
+});
+
+// Route Leads Management
+Route::middleware(['auth'])->group(function () {
+    Route::resource('leads', LeadController::class);
 });
 
 require __DIR__.'/auth.php';

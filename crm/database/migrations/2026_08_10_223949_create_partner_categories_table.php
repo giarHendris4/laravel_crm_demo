@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('partner_categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete(); // atau partner_id
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete(); // Pastikan namanya 'category_id'
             $table->timestamps();
         });
     }

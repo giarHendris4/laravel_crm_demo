@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Category;
+use App\Models\Lead;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -33,6 +35,11 @@ class User extends Authenticatable
 
         public function categories()
     {
-        return $this->belongsToMany(Category::class, 'partner_categories', 'partner_id', 'category_id');
+        return $this->belongsToMany(Category::class, 'partner_categories', 'user_id', 'category_id');
+    }
+
+        public function leads(): HasMany
+    {
+        return $this->hasMany(Lead::class);
     }
 }
