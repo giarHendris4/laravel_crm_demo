@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\DealController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\LeadController;
@@ -50,6 +53,10 @@ Route::middleware(['auth', 'role:partner'])->prefix('partner')->name('partner.')
 // Route Leads Management
 Route::middleware(['auth'])->group(function () {
     Route::resource('leads', LeadController::class);
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('deals', DealController::class);
 });
 
 require __DIR__.'/auth.php';
