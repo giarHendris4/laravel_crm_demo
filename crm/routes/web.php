@@ -1,18 +1,26 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
-use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Partner\DashboardController as PartnerDashboard;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    $user = auth()->user();
+
+    return match ($user->role) {
+        'admin'   => redirect()->route('admin.dashboard'),
+        'sales'   => redirect()->route('sales.dashboard'),
+        'partner' => redirect()->route('partner.dashboard'),
+        default   => abort(403, 'Role tidak dikenali.'),
+    };
+})->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -23,6 +31,9 @@ Route::middleware('auth')->group(function () {
 // Route untuk Admin
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+    
+    // Resource route untuk User Management
+    Route::resource('users', UserController::class);
 });
 
 // Route untuk Sales
