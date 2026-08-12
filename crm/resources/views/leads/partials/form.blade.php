@@ -74,6 +74,23 @@
         @enderror
     </div>
 
+    <!-- Kategori Lead -->
+    <div>
+        <label for="lead_category_id" class="block text-sm font-medium text-gray-700">Kategori Lead</label>
+        <select name="lead_category_id" id="lead_category_id"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+            <option value="">-- Pilih Kategori --</option>
+            @foreach ($categories ?? [] as $category)
+                <option value="{{ $category->id }}" {{ old('lead_category_id', $lead->lead_category_id ?? '') == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
+        @error('lead_category_id')
+            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+        @enderror
+    </div>
+
     <!-- Status (Sesuai Controller: new, contacted, proposal, negotiation, won, lost) -->
     <div>
         <label for="status" class="block text-sm font-medium text-gray-700">Status Lead</label>

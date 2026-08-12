@@ -26,6 +26,7 @@
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Judul Lead</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Perusahaan / PIC</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sales</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nilai Potensi</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -39,6 +40,9 @@
                                     <td class="px-4 py-4">
                                         <div class="font-semibold">{{ $lead->company_name }}</div>
                                         <div class="text-xs text-gray-500">{{ $lead->contact_name }} ({{ $lead->phone ?? '-' }})</div>
+                                    </td>
+                                    <td class="px-4 py-4 text-xs text-gray-600">
+                                        {{ $lead->category->name ?? '-' }}
                                     </td>
                                     <td class="px-4 py-4 text-xs text-gray-600">
                                         {{ $lead->user->name ?? 'Unassigned' }}
@@ -68,7 +72,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-6 text-center text-gray-500">Belum ada data lead.</td>
+                                    <td colspan="7" class="px-4 py-6 text-center text-gray-500">Belum ada data lead.</td>
                                 </tr>
                             @endforelse
                         </tbody>

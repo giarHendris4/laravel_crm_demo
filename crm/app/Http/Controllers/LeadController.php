@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
+use App\Models\LeadCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +17,7 @@ class LeadController extends Controller
     {
         $user = Auth::user();
 
-        $leads = Lead::with('user')
+        $leads = Lead::with(['user', 'category'])
             ->when($user->role === 'sales', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
@@ -31,7 +32,9 @@ class LeadController extends Controller
      */
     public function create()
     {
-        return view('leads.create');
+        $categories = LeadCategory::orderBy('name')->get();
+
+        return view('leads.create', compact('categories'));
     }
 
     /**
@@ -40,6 +43,7 @@ class LeadController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'lead_category_id' => 'nullable|exists:lead_categories,id',
             'title' => 'required|string|max:255',
             'company_name' => 'required|string|max:255',
             'contact_name' => 'required|string|max:255',
@@ -59,7 +63,7 @@ class LeadController extends Controller
     // Show Lead
     public function show(Lead $lead)
     {
-        $lead->load('activities.user');
+        $lead->load(['activities.user', 'category']);
 
         return view('leads.show', compact('lead'));
     }
@@ -74,7 +78,9 @@ class LeadController extends Controller
             abort(403);
         }
 
-        return view('leads.edit', compact('lead'));
+        $categories = LeadCategory::orderBy('name')->get();
+
+        return view('leads.edit', compact('lead', 'categories'));
     }
 
     /**
@@ -87,6 +93,7 @@ class LeadController extends Controller
         }
 
         $validated = $request->validate([
+            'lead_category_id' => 'nullable|exists:lead_categories,id',
             'title' => 'required|string|max:255',
             'company_name' => 'required|string|max:255',
             'contact_name' => 'required|string|max:255',
