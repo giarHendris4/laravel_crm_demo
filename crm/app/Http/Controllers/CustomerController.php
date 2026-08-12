@@ -12,14 +12,14 @@ class CustomerController extends Controller
 {
     /**
      * Tampilkan daftar customer.
-     * Admin melihat semua; Sales hanya melihat customer miliknya.
+     * Admin melihat semua; Sales/Partner hanya melihat customer miliknya.
      */
     public function index()
     {
         $user = Auth::user();
 
         $customers = Customer::with(['user', 'lead'])
-            ->when($user->role === 'sales', function ($query) use ($user) {
+            ->when($user->role !== 'admin', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
             ->latest()
@@ -33,11 +33,20 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        // Daftar sales sebagai kandidat pemilik (hanya untuk admin)
-        $sales = User::where('role', 'sales')->orderBy('name')->get();
+        $user = Auth::user();
 
-        // Lead yang belum punya customer (untuk tracing asal-usul)
-        $leads = Lead::doesntHave('customer')->latest()->get();
+        // Hanya Admin yang butuh daftar sales untuk assign pemilik customer
+        $sales = $user->role === 'admin' 
+            ? User::where('role', 'sales')->orderBy('name')->get() 
+            : collect();
+
+        // Lead yang belum punya customer, diisolasi sesuai role
+        $leads = Lead::doesntHave('customer')
+            ->when($user->role !== 'admin', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->latest()
+            ->get();
 
         return view('customers.create', compact('sales', 'leads'));
     }
@@ -47,8 +56,10 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
         $validated = $request->validate([
-            'user_id'              => 'required|exists:users,id',
+            'user_id'              => $user->role === 'admin' ? 'required|exists:users,id' : 'nullable',
             'lead_id'              => 'nullable|exists:leads,id',
             'company_name'         => 'required|string|max:255',
             'contact_name'         => 'required|string|max:255',
@@ -59,6 +70,19 @@ class CustomerController extends Controller
             'total_lifetime_value' => 'required|numeric|min:0',
             'notes'                => 'nullable|string',
         ]);
+
+        // Mencegah manipulasi user_id oleh non-Admin
+        if ($user->role !== 'admin') {
+            $validated['user_id'] = $user->id;
+        }
+
+        // Validasi opsional: Jika lead_id diisi oleh Non-Admin, pastikan lead tersebut milik dia
+        if (!empty($validated['lead_id']) && $user->role !== 'admin') {
+            $lead = Lead::find($validated['lead_id']);
+            if (!$lead || $lead->user_id !== $user->id) {
+                abort(403, 'Anda tidak berhak menghubungkan Lead ini.');
+            }
+        }
 
         Customer::create($validated);
 
@@ -84,9 +108,19 @@ class CustomerController extends Controller
     {
         $this->authorizeAccess($customer);
 
-        $sales = User::where('role', 'sales')->orderBy('name')->get();
-        $leads = Lead::doesntHave('customer')
-            ->orWhere('id', $customer->lead_id)
+        $user = Auth::user();
+
+        $sales = $user->role === 'admin' 
+            ? User::where('role', 'sales')->orderBy('name')->get() 
+            : collect();
+
+        $leads = Lead::where(function ($query) use ($customer, $user) {
+                $query->doesntHave('customer')
+                      ->orWhere('id', $customer->lead_id);
+            })
+            ->when($user->role !== 'admin', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
             ->latest()
             ->get();
 
@@ -100,8 +134,10 @@ class CustomerController extends Controller
     {
         $this->authorizeAccess($customer);
 
+        $user = Auth::user();
+
         $validated = $request->validate([
-            'user_id'              => 'required|exists:users,id',
+            'user_id'              => $user->role === 'admin' ? 'required|exists:users,id' : 'nullable',
             'lead_id'              => 'nullable|exists:leads,id',
             'company_name'         => 'required|string|max:255',
             'contact_name'         => 'required|string|max:255',
@@ -112,6 +148,10 @@ class CustomerController extends Controller
             'total_lifetime_value' => 'required|numeric|min:0',
             'notes'                => 'nullable|string',
         ]);
+
+        if ($user->role !== 'admin') {
+            $validated['user_id'] = $customer->user_id; // Kunci agar tidak merubah pemilik asli
+        }
 
         $customer->update($validated);
 
@@ -131,13 +171,12 @@ class CustomerController extends Controller
     }
 
     /**
-     * Otorisasi sederhana: Sales hanya bisa mengakses customer miliknya.
-     * Admin bebas mengakses semua.
+     * Otorisasi: Selain Admin, user hanya boleh mengelola customer miliknya sendiri.
      */
     private function authorizeAccess(Customer $customer): void
     {
-        if (Auth::user()->role === 'sales' && $customer->user_id !== Auth::id()) {
-            abort(403);
+        if (Auth::user()->role !== 'admin' && $customer->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke data Customer ini.');
         }
     }
 }

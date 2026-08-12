@@ -18,6 +18,14 @@ class Deal extends Model
         'expected_close_date',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'deal_value'          => 'decimal:2',
+            'expected_close_date' => 'date',
+        ];
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
