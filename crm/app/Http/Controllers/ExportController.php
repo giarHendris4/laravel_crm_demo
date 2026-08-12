@@ -30,9 +30,7 @@ class ExportController extends Controller
         $file = 'daftar-leads-'.date('Y-m-d').'.'.$format;
         $writerType = $format === 'csv' ? ExcelType::CSV : null;
 
-        Excel::queue($export, $file, null, $writerType);
-
-        return redirect()->back()->with('success', 'Export data leads sedang diproses di latar belakang.');
+        return Excel::download($export, $file, $writerType);
     }
 
     public function exportSales(Request $request)
@@ -46,9 +44,7 @@ class ExportController extends Controller
         $file = 'laporan-penjualan-'.date('Y-m-d').'.'.$format;
         $writerType = $format === 'csv' ? ExcelType::CSV : null;
 
-        Excel::queue($export, $file, null, $writerType);
-
-        return redirect()->back()->with('success', 'Export laporan penjualan sedang diproses di latar belakang.');
+        return Excel::download($export, $file, $writerType);
     }
 
     /**

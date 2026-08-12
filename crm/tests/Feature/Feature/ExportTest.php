@@ -23,27 +23,27 @@ class ExportTest extends TestCase
     }
 
     #[Test]
-    public function test_admin_dapat_menjadwalkan_export_data_leads()
+    public function test_admin_dapat_mengunduh_export_data_leads()
     {
         Excel::fake();
 
         $response = $this->actingAs($this->admin)->get(route('export.leads'));
 
-        $response->assertRedirect();
-        Excel::assertQueued('daftar-leads-'.date('Y-m-d').'.xlsx', function (LeadsExport $export) {
+        $response->assertStatus(200);
+        Excel::assertDownloaded('daftar-leads-'.date('Y-m-d').'.xlsx', function (LeadsExport $export) {
             return $export instanceof LeadsExport;
         });
     }
 
     #[Test]
-    public function test_admin_dapat_menjadwalkan_export_laporan_sales()
+    public function test_admin_dapat_mengunduh_export_laporan_sales()
     {
         Excel::fake();
 
         $response = $this->actingAs($this->admin)->get(route('export.sales'));
 
-        $response->assertRedirect();
-        Excel::assertQueued('laporan-penjualan-'.date('Y-m-d').'.xlsx', function (SalesExport $export) {
+        $response->assertStatus(200);
+        Excel::assertDownloaded('laporan-penjualan-'.date('Y-m-d').'.xlsx', function (SalesExport $export) {
             return $export instanceof SalesExport;
         });
     }

@@ -27,7 +27,7 @@ class ReportsTest extends TestCase
         }
     }
 
-    public function test_export_leads_queues_csv_with_custom_period(): void
+    public function test_export_leads_downloads_csv_with_custom_period(): void
     {
         Excel::fake();
 
@@ -40,13 +40,13 @@ class ReportsTest extends TestCase
             'format' => 'csv',
         ]));
 
-        $response->assertRedirect();
-        Excel::assertQueued('daftar-leads-'.date('Y-m-d').'.csv', function (LeadsExport $export) {
+        $response->assertStatus(200);
+        Excel::assertDownloaded('daftar-leads-'.date('Y-m-d').'.csv', function (LeadsExport $export) {
             return $export instanceof LeadsExport;
         });
     }
 
-    public function test_export_sales_queues_excel_with_weekly_period(): void
+    public function test_export_sales_downloads_excel_with_weekly_period(): void
     {
         Excel::fake();
 
@@ -57,8 +57,8 @@ class ReportsTest extends TestCase
             'format' => 'xlsx',
         ]));
 
-        $response->assertRedirect();
-        Excel::assertQueued('laporan-penjualan-'.date('Y-m-d').'.xlsx', function (SalesExport $export) {
+        $response->assertStatus(200);
+        Excel::assertDownloaded('laporan-penjualan-'.date('Y-m-d').'.xlsx', function (SalesExport $export) {
             return $export instanceof SalesExport;
         });
     }

@@ -15,7 +15,7 @@
             @endif
 
             <div class="p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-md text-sm text-indigo-800">
-                Export diproses di latar belakang (queue). File Excel/CSV akan tersedia setelah job selesai.
+                Klik tombol Export untuk mengunduh file Excel/CSV sesuai periode yang dipilih.
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

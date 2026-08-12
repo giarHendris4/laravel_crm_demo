@@ -3,12 +3,11 @@
 namespace App\Exports;
 
 use App\Models\Lead;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class LeadsExport implements FromQuery, ShouldQueue, WithHeadings, WithMapping
+class LeadsExport implements FromQuery, WithHeadings, WithMapping
 {
     private ?int $userId;
 
