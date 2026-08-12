@@ -13,6 +13,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadAssignmentController;
 use App\Http\Controllers\Partner\LeadController as PartnerLeadController;
+use App\Http\Controllers\ExportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -83,5 +84,10 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/partner/leads/{lead}/status', [PartnerLeadController::class, 'updateStatus'])->name('partner.leads.update-status');
 });
 
+Route::middleware(['auth'])->group(function () {
+    // Export Routes
+    Route::get('/export/leads', [ExportController::class, 'exportLeads'])->name('export.leads');
+    Route::get('/export/sales', [ExportController::class, 'exportSales'])->name('export.sales');
+});
 
 require __DIR__.'/auth.php';
