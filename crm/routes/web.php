@@ -14,6 +14,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadAssignmentController;
 use App\Http\Controllers\Partner\LeadController as PartnerLeadController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -89,6 +90,10 @@ Route::middleware(['auth'])->group(function () {
     // Export Routes
     Route::get('/export/leads', [ExportController::class, 'exportLeads'])->name('export.leads');
     Route::get('/export/sales', [ExportController::class, 'exportSales'])->name('export.sales');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('customers', CustomerController::class);
 });
 
 require __DIR__.'/auth.php';

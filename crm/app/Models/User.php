@@ -49,4 +49,9 @@ class User extends Authenticatable
                     ->withPivot('assigned_by', 'notes')
                     ->withTimestamps();
     }
+
+    public function customers(): HasMany
+    {
+        return $this->hasMany(Customer::class);
+    }
 }

@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Lead extends Model
@@ -45,5 +46,10 @@ class Lead extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(LeadCategory::class, 'lead_category_id');
+    }
+
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class);
     }
 }
