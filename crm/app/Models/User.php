@@ -43,6 +43,11 @@ class User extends Authenticatable
         return $this->hasMany(Lead::class);
     }
 
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class);
+    }
+
     public function assignedLeads()
     {
         return $this->belongsToMany(Lead::class, 'lead_assignments', 'partner_id', 'lead_id')
