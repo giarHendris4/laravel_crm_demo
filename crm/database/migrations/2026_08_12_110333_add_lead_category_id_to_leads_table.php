@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::table('leads', function (Blueprint $table) {
             // Menambahkan foreign key lead_category_id setelah kolom user_id
             $table->foreignId('lead_category_id')
-                  ->nullable()
-                  ->after('user_id')
-                  ->constrained('lead_categories')
-                  ->nullOnDelete();
+                ->nullable()
+                ->after('user_id')
+                ->constrained('lead_categories')
+                ->nullOnDelete();
         });
     }
 

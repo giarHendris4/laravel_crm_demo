@@ -21,7 +21,7 @@ class Deal extends Model
     protected function casts(): array
     {
         return [
-            'deal_value'          => 'decimal:2',
+            'deal_value' => 'decimal:2',
             'expected_close_date' => 'date',
         ];
     }

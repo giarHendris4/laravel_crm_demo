@@ -14,7 +14,9 @@ class DealManagementTest extends TestCase
     use RefreshDatabase;
 
     protected User $sales;
+
     protected User $admin;
+
     protected Lead $lead;
 
     protected function setUp(): void

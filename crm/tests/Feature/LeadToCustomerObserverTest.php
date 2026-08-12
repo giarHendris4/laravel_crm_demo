@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Lead;
 use App\Models\Customer;
+use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +15,7 @@ class LeadToCustomerObserverTest extends TestCase
     public function test_lead_won_automatically_creates_customer_record(): void
     {
         $sales = User::factory()->create(['role' => 'sales']);
-        
+
         $lead = Lead::factory()->create([
             'user_id' => $sales->id,
             'status' => 'negotiation',

@@ -127,4 +127,25 @@ class BackendResourceCrudTest extends TestCase
         $this->actingAs($sales)->get(route('admin.users.show', $admin))->assertStatus(403);
         $this->actingAs($sales)->get(route('admin.users.edit', $admin))->assertStatus(403);
     }
+
+    public function test_partner_cannot_access_leads_deals_customers(): void
+    {
+        $partner = User::factory()->create(['role' => 'partner']);
+
+        $this->actingAs($partner)->get(route('leads.index'))->assertStatus(403);
+        $this->actingAs($partner)->get(route('leads.create'))->assertStatus(403);
+        $this->actingAs($partner)->get(route('deals.index'))->assertStatus(403);
+        $this->actingAs($partner)->get(route('deals.create'))->assertStatus(403);
+        $this->actingAs($partner)->get(route('customers.index'))->assertStatus(403);
+        $this->actingAs($partner)->get(route('customers.create'))->assertStatus(403);
+    }
+
+    public function test_sales_can_access_leads_deals_customers(): void
+    {
+        $sales = User::factory()->create(['role' => 'sales']);
+
+        $this->actingAs($sales)->get(route('leads.index'))->assertStatus(200);
+        $this->actingAs($sales)->get(route('deals.index'))->assertStatus(200);
+        $this->actingAs($sales)->get(route('customers.index'))->assertStatus(200);
+    }
 }

@@ -31,9 +31,10 @@ class DealController extends Controller
     {
         $user = Auth::user();
 
-        // Hanya tampilkan lead yang relevan
+        // Hanya tampilkan lead terbaru (batasi agar tidak memuat seluruh data)
         $leads = Lead::when($user->role !== 'admin', fn ($q) => $q->where('user_id', $user->id))
             ->latest()
+            ->limit(50)
             ->get();
 
         return view('deals.create', compact('leads'));
@@ -47,10 +48,10 @@ class DealController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            'lead_id'             => 'required|exists:leads,id',
-            'title'               => 'required|string|max:255',
-            'deal_value'          => 'required|numeric|min:0',
-            'stage'               => 'required|in:qualification,proposal,negotiation,closed_won,closed_lost',
+            'lead_id' => 'required|exists:leads,id',
+            'title' => 'required|string|max:255',
+            'deal_value' => 'required|numeric|min:0',
+            'stage' => 'required|in:qualification,proposal,negotiation,closed_won,closed_lost',
             'expected_close_date' => 'required|date',
         ]);
 
@@ -92,6 +93,7 @@ class DealController extends Controller
 
         $leads = Lead::when($user->role !== 'admin', fn ($q) => $q->where('user_id', $user->id))
             ->latest()
+            ->limit(50)
             ->get();
 
         return view('deals.edit', compact('deal', 'leads'));
@@ -105,9 +107,9 @@ class DealController extends Controller
         $this->authorizeAccess($deal);
 
         $validated = $request->validate([
-            'title'               => 'sometimes|required|string|max:255',
-            'deal_value'          => 'sometimes|required|numeric|min:0',
-            'stage'               => 'required|in:qualification,proposal,negotiation,closed_won,closed_lost',
+            'title' => 'sometimes|required|string|max:255',
+            'deal_value' => 'sometimes|required|numeric|min:0',
+            'stage' => 'required|in:qualification,proposal,negotiation,closed_won,closed_lost',
             'expected_close_date' => 'nullable|date',
         ]);
 

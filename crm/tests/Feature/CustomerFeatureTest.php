@@ -14,16 +14,16 @@ class CustomerFeatureTest extends TestCase
     private function customerData(array $overrides = []): array
     {
         return array_merge([
-            'user_id'              => null,
-            'lead_id'              => null,
-            'company_name'         => 'PT Klien Utama',
-            'contact_name'         => 'Andi Pratama',
-            'email'                => 'andi@klien.com',
-            'phone'                => '081234567890',
-            'address'              => 'Jakarta Selatan',
-            'status'               => 'active',
+            'user_id' => null,
+            'lead_id' => null,
+            'company_name' => 'PT Klien Utama',
+            'contact_name' => 'Andi Pratama',
+            'email' => 'andi@klien.com',
+            'phone' => '081234567890',
+            'address' => 'Jakarta Selatan',
+            'status' => 'active',
             'total_lifetime_value' => 100000000,
-            'notes'                => 'Customer prioritas.',
+            'notes' => 'Customer prioritas.',
         ], $overrides);
     }
 
@@ -56,10 +56,10 @@ class CustomerFeatureTest extends TestCase
 
         $response->assertRedirect(route('customers.index'));
         $this->assertDatabaseHas('customers', [
-            'company_name'         => 'PT Klien Utama',
-            'contact_name'         => 'Andi Pratama',
-            'user_id'              => $sales->id,
-            'status'               => 'active',
+            'company_name' => 'PT Klien Utama',
+            'contact_name' => 'Andi Pratama',
+            'user_id' => $sales->id,
+            'status' => 'active',
             'total_lifetime_value' => 100000000,
         ]);
     }
@@ -71,7 +71,7 @@ class CustomerFeatureTest extends TestCase
         // status invalid harus ditolak oleh validasi
         $response = $this->actingAs($admin)->post(route('customers.store'), $this->customerData([
             'user_id' => $admin->id,
-            'status'  => 'invalid_status',
+            'status' => 'invalid_status',
         ]));
 
         $response->assertSessionHasErrors('status');
@@ -86,16 +86,16 @@ class CustomerFeatureTest extends TestCase
         $customer = Customer::create($this->customerData(['user_id' => $sales->id]));
 
         $response = $this->actingAs($admin)->put(route('customers.update', $customer), $this->customerData([
-            'user_id'      => $sales->id,
+            'user_id' => $sales->id,
             'company_name' => 'PT Klien Terupdate',
-            'status'       => 'inactive',
+            'status' => 'inactive',
         ]));
 
         $response->assertRedirect(route('customers.index'));
         $this->assertDatabaseHas('customers', [
-            'id'           => $customer->id,
+            'id' => $customer->id,
             'company_name' => 'PT Klien Terupdate',
-            'status'       => 'inactive',
+            'status' => 'inactive',
         ]);
     }
 
@@ -118,11 +118,11 @@ class CustomerFeatureTest extends TestCase
         $sales2 = User::factory()->create(['role' => 'sales']);
 
         Customer::create($this->customerData([
-            'user_id'      => $sales1->id,
+            'user_id' => $sales1->id,
             'company_name' => 'PT Milik Sales 1',
         ]));
         Customer::create($this->customerData([
-            'user_id'      => $sales2->id,
+            'user_id' => $sales2->id,
             'company_name' => 'PT Milik Sales 2',
         ]));
 

@@ -10,8 +10,8 @@ class DashboardController extends Controller
     public function index()
     {
         $stats = [
-            'total_users'   => User::count(),
-            'total_sales'   => User::where('role', 'sales')->count(),
+            'total_users' => User::count(),
+            'total_sales' => User::where('role', 'sales')->count(),
             'total_partner' => User::where('role', 'partner')->count(),
         ];
 

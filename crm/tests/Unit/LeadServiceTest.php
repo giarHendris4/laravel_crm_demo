@@ -9,7 +9,7 @@ class LeadServiceTest extends TestCase
     public function test_opportunity_value_formatting(): void
     {
         $value = 15000000;
-        $formatted = 'Rp ' . number_format($value, 0, ',', '.');
+        $formatted = 'Rp '.number_format($value, 0, ',', '.');
 
         $this->assertEquals('Rp 15.000.000', $formatted);
     }

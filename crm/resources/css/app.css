@@ -1,3 +1,77 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================================
+   Optimasi tampilan mobile (di bawah 640px)
+   Ukuran font seimbang + padding yang nyaman antar kartu/data
+   ============================================================ */
+@media (max-width: 639px) {
+    html {
+        font-size: 16px;
+    }
+
+    body {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    /* Heading tidak terlalu besar di layar kecil */
+    h1 {
+        font-size: 1.5rem;
+        line-height: 1.3;
+    }
+
+    h2 {
+        font-size: 1.35rem;
+        line-height: 1.3;
+    }
+
+    h3 {
+        font-size: 1.15rem;
+        line-height: 1.4;
+    }
+
+    /* Angka statistik kartu dashboard diturunkan agar tidak kebesaran */
+    .text-2xl {
+        font-size: 1.5rem;
+    }
+
+    .text-3xl {
+        font-size: 1.75rem;
+    }
+
+    .text-4xl {
+        font-size: 2rem;
+    }
+
+    /* Teks kecil (label/supp) dinaikkan sedikit agar terbaca */
+    .text-xs {
+        font-size: 0.8125rem;
+    }
+
+    /* Form input nyaman dibaca & mencegah auto-zoom iOS */
+    input,
+    select,
+    textarea,
+    button {
+        font-size: 16px;
+    }
+
+    /* Jarak antar kartu yang ditumpuk (data berurutan ke bawah) lebih lega */
+    .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 1.25rem;
+    }
+
+    /* Padding konten halaman agar tidak mepet ke tepi layar */
+    .py-12 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .px-4,
+    .px-6 {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+}

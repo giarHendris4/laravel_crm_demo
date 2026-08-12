@@ -24,6 +24,6 @@ class Category extends Model
     public function partners(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'partner_categories', 'category_id', 'user_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 }

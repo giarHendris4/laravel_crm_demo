@@ -1,6 +1,18 @@
-<form action="{{ route('leads.update', $lead) }}" method="POST">
-    @csrf
-    @method('PUT')
-    <input type="text" name="title" value="{{ $lead->title }}">
-    <button type="submit">Update</button>
-</form>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Edit Lead') }}: {{ $lead->title }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <form action="{{ route('leads.update', $lead) }}" method="POST">
+                    @method('PUT')
+                    @include('leads.partials.form', ['lead' => $lead])
+                </form>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

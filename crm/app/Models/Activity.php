@@ -18,6 +18,13 @@ class Activity extends Model
         'performed_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'performed_at' => 'datetime',
+        ];
+    }
+
     public function lead()
     {
         return $this->belongsTo(Lead::class);

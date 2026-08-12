@@ -14,6 +14,7 @@ class ActivityLogTest extends TestCase
     use RefreshDatabase;
 
     protected User $sales;
+
     protected Lead $lead;
 
     protected function setUp(): void

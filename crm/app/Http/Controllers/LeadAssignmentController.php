@@ -22,7 +22,7 @@ class LeadAssignmentController extends Controller
             $validated['partner_id'] => [
                 'assigned_by' => auth()->id(),
                 'notes' => $validated['notes'] ?? null,
-            ]
+            ],
         ]);
 
         return back()->with('success', 'Lead berhasil ditugaskan ke Partner.');

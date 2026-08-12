@@ -12,8 +12,11 @@ class LeadAuthorizationTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $salesA;
+
     protected User $salesB;
+
     protected Lead $leadSalesA;
 
     protected function setUp(): void

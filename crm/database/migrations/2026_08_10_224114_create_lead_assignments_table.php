@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('lead_assignments', function (Blueprint $table) {
             $table->id();
-            
+
             // Foreign keys
             $table->foreignId('lead_id')->constrained()->cascadeOnDelete();
             $table->foreignId('partner_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('assigned_by')->nullable()->constrained('users')->nullOnDelete();
-            
+
             $table->text('notes')->nullable();
             $table->timestamps();
         });

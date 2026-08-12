@@ -63,15 +63,20 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="user_id" class="block text-sm font-medium text-gray-700">Sales (Pemilik)</label>
-                                <select name="user_id" id="user_id"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm" required>
-                                    <option value="">-- Pilih Sales --</option>
-                                    @foreach ($sales as $salesUser)
-                                        <option value="{{ $salesUser->id }}" {{ old('user_id', $customer->user_id) == $salesUser->id ? 'selected' : '' }}>
-                                            {{ $salesUser->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                @if ($sales->count() > 0)
+                                    <select name="user_id" id="user_id"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm" required>
+                                        <option value="">-- Pilih Sales --</option>
+                                        @foreach ($sales as $salesUser)
+                                            <option value="{{ $salesUser->id }}" {{ old('user_id', $customer->user_id) == $salesUser->id ? 'selected' : '' }}>
+                                                {{ $salesUser->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                                    <div class="mt-1 text-sm text-gray-700">{{ auth()->user()->name }}</div>
+                                @endif
                                 @error('user_id')
                                     <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                                 @enderror

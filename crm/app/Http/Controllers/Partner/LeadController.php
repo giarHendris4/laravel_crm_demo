@@ -11,7 +11,7 @@ class LeadController extends Controller
     public function index()
     {
         // Strict Data Isolation: Partner HANYA bisa lihat lead yang di-assign ke ID mereka
-        $leads = auth()->user()->assignedLeads()->with('user')->get();
+        $leads = auth()->user()->assignedLeads()->with('user')->paginate(15);
 
         return view('partner.leads.index', compact('leads'));
     }

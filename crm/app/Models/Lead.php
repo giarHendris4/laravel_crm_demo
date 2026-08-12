@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\Activity;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Lead extends Model
 {
@@ -40,8 +38,8 @@ class Lead extends Model
     public function partners()
     {
         return $this->belongsToMany(User::class, 'lead_assignments', 'lead_id', 'partner_id')
-                    ->withPivot('assigned_by', 'notes')
-                    ->withTimestamps();
+            ->withPivot('assigned_by', 'notes')
+            ->withTimestamps();
     }
 
     public function category(): BelongsTo

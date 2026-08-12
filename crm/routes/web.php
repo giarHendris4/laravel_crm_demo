@@ -2,19 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\DealController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\LeadController;
 use App\Http\Controllers\Partner\DashboardController as PartnerDashboard;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
-use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LeadAssignmentController;
 use App\Http\Controllers\Partner\LeadController as PartnerLeadController;
-use App\Http\Controllers\ExportController;
-use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,10 +19,10 @@ Route::middleware('auth')->group(function () {
         $user = auth()->user();
 
         return match ($user->role) {
-            'admin'   => redirect()->route('admin.dashboard'),
-            'sales'   => redirect()->route('sales.dashboard'),
+            'admin' => redirect()->route('admin.dashboard'),
+            'sales' => redirect()->route('sales.dashboard'),
             'partner' => redirect()->route('partner.dashboard'),
-            default   => abort(403, 'Role tidak dikenali.'),
+            default => abort(403, 'Role tidak dikenali.'),
         };
     })->name('dashboard');
 });
@@ -64,12 +56,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('dashboard.index');
 });
 
-// Route Leads Management
-Route::middleware(['auth'])->group(function () {
+// Route Leads Management (Admin & Sales saja)
+Route::middleware(['auth', 'role:admin,sales'])->group(function () {
     Route::resource('leads', LeadController::class);
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:admin,sales'])->group(function () {
     Route::resource('deals', DealController::class);
 });
 
@@ -87,12 +79,13 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    // Export Routes
+    // Laporan & Export Routes
+    Route::get('/reports', [ExportController::class, 'index'])->name('reports.index');
     Route::get('/export/leads', [ExportController::class, 'exportLeads'])->name('export.leads');
     Route::get('/export/sales', [ExportController::class, 'exportSales'])->name('export.sales');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:admin,sales'])->group(function () {
     Route::resource('customers', CustomerController::class);
 });
 

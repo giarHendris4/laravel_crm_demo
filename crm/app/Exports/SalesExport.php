@@ -3,24 +3,53 @@
 namespace App\Exports;
 
 use App\Models\Deal;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class SalesExport implements FromCollection, WithHeadings, WithMapping
+class SalesExport implements FromQuery, ShouldQueue, WithHeadings, WithMapping
 {
-    public function collection()
+    private ?int $userId;
+
+    private ?string $role;
+
+    private ?string $startDate;
+
+    private ?string $endDate;
+
+    public function __construct(?int $userId = null, ?string $role = null, ?string $startDate = null, ?string $endDate = null)
     {
-        $user = auth()->user();
+        $this->userId = $userId;
+        $this->role = $role;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
 
-        // Ambil deal yang bernilai Won (Penjualan / Sales Berhasil)
-        $query = Deal::where('stage', 'closed_won')->with(['user', 'lead']);
+    /**
+     * Streaming per-chunk agar tidak memuat seluruh data ke memori.
+     */
+    public function query()
+    {
+        $query = Deal::query()
+            ->leftJoin('users as sales', 'sales.id', '=', 'deals.user_id')
+            ->leftJoin('leads', 'leads.id', '=', 'deals.lead_id')
+            ->select('deals.*', 'sales.name as sales_name', 'leads.company_name as lead_company')
+            ->where('deals.stage', 'closed_won');
 
-        if ($user->role !== 'admin') {
-            $query->where('user_id', $user->id);
+        // Filter periode (deals.created_at)
+        if ($this->startDate && $this->endDate) {
+            $query->whereBetween('deals.created_at', [
+                $this->startDate.' 00:00:00',
+                $this->endDate.' 23:59:59',
+            ]);
         }
 
-        return $query->get();
+        if ($this->role !== 'admin') {
+            $query->where('deals.user_id', $this->userId);
+        }
+
+        return $query;
     }
 
     public function headings(): array
@@ -40,9 +69,9 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping
         return [
             $deal->id,
             $deal->title,
-            $deal->lead->company_name ?? '-',
+            $deal->lead_company ?? '-',
             $deal->deal_value,
-            $deal->user->name ?? '-',
+            $deal->sales_name ?? '-',
             $deal->updated_at->format('Y-m-d H:i'),
         ];
     }

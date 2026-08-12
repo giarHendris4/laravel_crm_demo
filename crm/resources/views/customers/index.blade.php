@@ -19,7 +19,61 @@
                 </div>
             @endif
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            {{-- KARTU (mobile 1 kolom, tablet 2 kolom) : 1 data per kartu, berurutan ke bawah --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 2xl:hidden gap-4">
+                @forelse ($customers as $customer)
+                    <div class="bg-white overflow-hidden shadow-sm border border-gray-200">
+                        <div class="px-4 py-3 border-b border-gray-100">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="font-semibold text-gray-900">{{ $customer->company_name }}</div>
+                                <span class="shrink-0 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    {{ $customer->status === 'active' ? 'bg-green-100 text-green-800' : '' }}
+                                    {{ $customer->status === 'inactive' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                    {{ $customer->status === 'churned' ? 'bg-red-100 text-red-800' : '' }}">
+                                    {{ strtoupper($customer->status) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="px-4 py-3 space-y-2 text-sm">
+                            <div>
+                                <div class="font-medium text-gray-500">{{ $customer->contact_name }} ({{ $customer->phone ?? '-' }})</div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500">Sales</span>
+                                <span class="text-gray-800">{{ $customer->user->name ?? 'Unassigned' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500">Lead Asal</span>
+                                <span class="text-gray-800">{{ $customer->lead->title ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500">Lifetime Value</span>
+                                <span class="font-semibold text-gray-800">Rp {{ number_format($customer->total_lifetime_value, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="px-4 py-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-3 text-sm">
+                                <a href="{{ route('customers.show', $customer) }}" class="text-gray-600 hover:text-gray-900 font-medium">Detail</a>
+                                <a href="{{ route('customers.edit', $customer) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Edit</a>
+                            </div>
+                            <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus customer ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="bg-white rounded-md shadow-sm p-6 text-center text-gray-500">Belum ada data customer.</div>
+                @endforelse
+            </div>
+
+            {{-- TABEL (desktop & laptop) --}}
+            <div class="hidden 2xl:block bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
@@ -56,7 +110,8 @@
                                             {{ strtoupper($customer->status) }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-4 text-right space-x-2">
+                                    <td class="px-4 py-4 text-right space-x-3">
+                                        <a href="{{ route('customers.show', $customer) }}" class="text-gray-600 hover:text-gray-900 font-medium">Detail</a>
                                         <a href="{{ route('customers.edit', $customer) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Edit</a>
 
                                         <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus customer ini?')">
@@ -76,10 +131,10 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
 
-                <div class="mt-4">
-                    {{ $customers->links() }}
-                </div>
+            <div class="mt-4">
+                {{ $customers->links() }}
             </div>
         </div>
     </div>

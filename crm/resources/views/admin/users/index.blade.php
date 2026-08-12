@@ -26,8 +26,46 @@
                     </a>
                 </div>
 
-                <!-- Tabel User -->
-                <div class="overflow-x-auto">
+                {{-- KARTU (mobile 1 kolom, tablet 2 kolom) : 1 data per kartu, berurutan ke bawah --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 2xl:hidden gap-4">
+                    @foreach ($users as $user)
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
+                                <div class="font-semibold text-gray-900">{{ $user->name }}</div>
+                                <span class="shrink-0 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    {{ $user->role === 'admin' ? 'bg-red-100 text-red-800' : ($user->role === 'sales' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800') }}">
+                                    {{ strtoupper($user->role) }}
+                                </span>
+                            </div>
+                            <div class="px-4 py-3 space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500">Email</span>
+                                    <span class="text-gray-800">{{ $user->email }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500">Dibuat</span>
+                                    <span class="text-gray-800">{{ $user->created_at->format('d M Y') }}</span>
+                                </div>
+                            </div>
+                            <div class="px-4 py-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-3 text-sm">
+                                    <a href="{{ route('admin.users.show', $user) }}" class="text-gray-600 hover:text-gray-900 font-medium">Detail</a>
+                                    <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Edit</a>
+                                </div>
+                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Tabel User (desktop & laptop besar) -->
+                <div class="hidden 2xl:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
@@ -35,6 +73,7 @@
                                 <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                 <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                 <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Dibuat</th>
+                                <th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -49,6 +88,18 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d M Y') }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right space-x-3">
+                                        <a href="{{ route('admin.users.show', $user) }}" class="text-gray-600 hover:text-gray-900 font-medium">Detail</a>
+                                        <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Edit</a>
+
+                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

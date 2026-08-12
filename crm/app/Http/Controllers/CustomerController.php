@@ -36,16 +36,17 @@ class CustomerController extends Controller
         $user = Auth::user();
 
         // Hanya Admin yang butuh daftar sales untuk assign pemilik customer
-        $sales = $user->role === 'admin' 
-            ? User::where('role', 'sales')->orderBy('name')->get() 
+        $sales = $user->role === 'admin'
+            ? User::where('role', 'sales')->orderBy('name')->get()
             : collect();
 
-        // Lead yang belum punya customer, diisolasi sesuai role
+        // Lead yang belum punya customer, diisolasi sesuai role (batasi jumlah)
         $leads = Lead::doesntHave('customer')
             ->when($user->role !== 'admin', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
             ->latest()
+            ->limit(50)
             ->get();
 
         return view('customers.create', compact('sales', 'leads'));
@@ -59,16 +60,16 @@ class CustomerController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            'user_id'              => $user->role === 'admin' ? 'required|exists:users,id' : 'nullable',
-            'lead_id'              => 'nullable|exists:leads,id',
-            'company_name'         => 'required|string|max:255',
-            'contact_name'         => 'required|string|max:255',
-            'email'                => 'nullable|email|max:255',
-            'phone'                => 'nullable|string|max:50',
-            'address'              => 'nullable|string|max:1000',
-            'status'               => 'required|in:active,inactive,churned',
+            'user_id' => $user->role === 'admin' ? 'required|exists:users,id' : 'nullable',
+            'lead_id' => 'nullable|exists:leads,id',
+            'company_name' => 'required|string|max:255',
+            'contact_name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:1000',
+            'status' => 'required|in:active,inactive,churned',
             'total_lifetime_value' => 'required|numeric|min:0',
-            'notes'                => 'nullable|string',
+            'notes' => 'nullable|string',
         ]);
 
         // Mencegah manipulasi user_id oleh non-Admin
@@ -77,9 +78,9 @@ class CustomerController extends Controller
         }
 
         // Validasi opsional: Jika lead_id diisi oleh Non-Admin, pastikan lead tersebut milik dia
-        if (!empty($validated['lead_id']) && $user->role !== 'admin') {
+        if (! empty($validated['lead_id']) && $user->role !== 'admin') {
             $lead = Lead::find($validated['lead_id']);
-            if (!$lead || $lead->user_id !== $user->id) {
+            if (! $lead || $lead->user_id !== $user->id) {
                 abort(403, 'Anda tidak berhak menghubungkan Lead ini.');
             }
         }
@@ -110,18 +111,19 @@ class CustomerController extends Controller
 
         $user = Auth::user();
 
-        $sales = $user->role === 'admin' 
-            ? User::where('role', 'sales')->orderBy('name')->get() 
+        $sales = $user->role === 'admin'
+            ? User::where('role', 'sales')->orderBy('name')->get()
             : collect();
 
-        $leads = Lead::where(function ($query) use ($customer, $user) {
-                $query->doesntHave('customer')
-                      ->orWhere('id', $customer->lead_id);
-            })
+        $leads = Lead::where(function ($query) use ($customer) {
+            $query->doesntHave('customer')
+                ->orWhere('id', $customer->lead_id);
+        })
             ->when($user->role !== 'admin', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
             ->latest()
+            ->limit(50)
             ->get();
 
         return view('customers.edit', compact('customer', 'sales', 'leads'));
@@ -137,16 +139,16 @@ class CustomerController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            'user_id'              => $user->role === 'admin' ? 'required|exists:users,id' : 'nullable',
-            'lead_id'              => 'nullable|exists:leads,id',
-            'company_name'         => 'required|string|max:255',
-            'contact_name'         => 'required|string|max:255',
-            'email'                => 'nullable|email|max:255',
-            'phone'                => 'nullable|string|max:50',
-            'address'              => 'nullable|string|max:1000',
-            'status'               => 'required|in:active,inactive,churned',
+            'user_id' => $user->role === 'admin' ? 'required|exists:users,id' : 'nullable',
+            'lead_id' => 'nullable|exists:leads,id',
+            'company_name' => 'required|string|max:255',
+            'contact_name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:1000',
+            'status' => 'required|in:active,inactive,churned',
             'total_lifetime_value' => 'required|numeric|min:0',
-            'notes'                => 'nullable|string',
+            'notes' => 'nullable|string',
         ]);
 
         if ($user->role !== 'admin') {

@@ -14,6 +14,7 @@ class SalesDashboardTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $sales;
 
     protected function setUp(): void
@@ -35,7 +36,7 @@ class SalesDashboardTest extends TestCase
             'email' => 'hendra@tokojaya.com',
             'phone' => '081234567890',
             'opportunity_value' => 1000000,
-            'status' => 'new'
+            'status' => 'new',
         ]);
 
         Deal::create([
@@ -50,14 +51,14 @@ class SalesDashboardTest extends TestCase
         $response = $this->actingAs($this->admin)->get(route('dashboard.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('1.000.000'); 
+        $response->assertSee('1.000.000');
     }
 
     #[Test]
     public function test_sales_hanya_melihat_statistik_milik_sendiri()
     {
         $salesLain = User::factory()->create(['role' => 'sales']);
-        
+
         // Lead & Deal Milik Sales sendiri (1.000.000)
         $lead1 = Lead::create([
             'user_id' => $this->sales->id,
@@ -67,7 +68,7 @@ class SalesDashboardTest extends TestCase
             'email' => 'maria@restoberkah.com',
             'phone' => '081298765432',
             'opportunity_value' => 1000000,
-            'status' => 'new'
+            'status' => 'new',
         ]);
 
         Deal::create([
@@ -88,7 +89,7 @@ class SalesDashboardTest extends TestCase
             'email' => 'agung@megah.com',
             'phone' => '081122334455',
             'opportunity_value' => 100000000,
-            'status' => 'new'
+            'status' => 'new',
         ]);
 
         Deal::create([

@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Lead>
+ * @extends Factory<Lead>
  */
 class LeadFactory extends Factory
 {
@@ -38,10 +39,10 @@ class LeadFactory extends Factory
 
         return [
             'user_id' => User::where('role', 'sales')->inRandomOrder()->first()?->id ?? User::factory(),
-            'title' => "Pengadaan layanan di " . $companyName,
+            'title' => 'Pengadaan layanan di '.$companyName,
             'company_name' => $companyName,
             'contact_name' => $contactName,
-            'email' => strtolower(str_replace(' ', '', $firstName)) . rand(1, 99) . '@gmail.com',
+            'email' => strtolower(str_replace(' ', '', $firstName)).rand(1, 99).'@gmail.com',
             'phone' => $this->faker->randomElement($phones),
             'opportunity_value' => $this->faker->numberBetween(5_000_000, 150_000_000), // Rp 5jt - 150jt
             'status' => $this->faker->randomElement(['new', 'contacted', 'proposal', 'negotiation', 'won', 'lost']),

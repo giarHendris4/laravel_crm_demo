@@ -13,9 +13,13 @@ class LeadAssignmentTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $sales;
+
     protected User $partnerA;
+
     protected User $partnerB;
+
     protected Lead $lead;
 
     protected function setUp(): void
@@ -24,7 +28,7 @@ class LeadAssignmentTest extends TestCase
 
         $this->admin = User::factory()->create(['role' => 'admin']);
         $this->sales = User::factory()->create(['role' => 'sales']);
-        
+
         // Buat 2 Partner Company terpisah
         $this->partnerA = User::factory()->create(['role' => 'partner', 'name' => 'PT Partner A']);
         $this->partnerB = User::factory()->create(['role' => 'partner', 'name' => 'PT Partner B']);
@@ -100,7 +104,7 @@ class LeadAssignmentTest extends TestCase
             ->patch(route('partner.leads.update-status', $this->lead->id), $payload);
 
         $response->assertRedirect();
-        
+
         $this->assertDatabaseHas('leads', [
             'id' => $this->lead->id,
             'status' => 'contacted',
