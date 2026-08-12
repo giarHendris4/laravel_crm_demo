@@ -15,7 +15,35 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Buat Akun Admin
+        // 0. Akun Demo (sesuai README) — satu akun per role untuk testing
+        User::firstOrCreate(
+            ['email' => 'admin@crm-demo.com'],
+            [
+                'name' => 'Super Administrator',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'sales@crm-demo.com'],
+            [
+                'name' => 'Budi Sales',
+                'password' => Hash::make('password'),
+                'role' => 'sales',
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'partner@crm-demo.com'],
+            [
+                'name' => 'PT Mitra Finansial Utama',
+                'password' => Hash::make('password'),
+                'role' => 'partner',
+            ]
+        );
+
+        // 1. Buat Akun Admin (contoh tambahan)
         User::firstOrCreate(
             ['email' => 'admin@crm.com'], // Pencarian berdasarkan unique key
             [
