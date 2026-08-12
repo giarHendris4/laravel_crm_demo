@@ -13,7 +13,6 @@ return new class extends Migration
     {
     Schema::create('leads', function (Blueprint $table) {
         $table->id();
-        
         // Relasi ke Sales (User yang menangani)
         $table->foreignId('user_id')->constrained()->cascadeOnDelete();
         
