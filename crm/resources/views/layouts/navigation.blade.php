@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<!-- <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -111,4 +111,14 @@
             </div>
         </div>
     </div>
-</nav>
+</nav> -->
+
+<!-- Logo / Brand Link -->
+<a href="{{ auth()->user()->role === 'partner' ? route('partner.leads.index') : route('dashboard') }}">
+    <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+</a>
+
+<!-- Navigation Link -->
+<x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+    {{ __('Dashboard') }}
+</x-nav-link>

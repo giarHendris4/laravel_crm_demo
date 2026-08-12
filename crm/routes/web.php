@@ -20,16 +20,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    $user = auth()->user();
+// Redirect utama setelah login berdasarkan role
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
 
-    return match ($user->role) {
-        'admin'   => redirect()->route('admin.dashboard'),
-        'sales'   => redirect()->route('sales.dashboard'),
-        'partner' => redirect()->route('partner.dashboard'),
-        default   => abort(403, 'Role tidak dikenali.'),
-    };
-})->middleware(['auth'])->name('dashboard');
+        return match ($user->role) {
+            'admin'   => redirect()->route('admin.dashboard'),
+            'sales'   => redirect()->route('sales.dashboard'),
+            'partner' => redirect()->route('partner.dashboard'),
+            default   => abort(403, 'Role tidak dikenali.'),
+        };
+    })->name('dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,7 +43,7 @@ Route::middleware('auth')->group(function () {
 // Route untuk Admin
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
-    
+
     // Resource route untuk User Management
     Route::resource('users', UserController::class);
 });
@@ -53,6 +56,11 @@ Route::middleware(['auth', 'role:sales'])->prefix('sales')->name('sales.')->grou
 // Route untuk Partner
 Route::middleware(['auth', 'role:partner'])->prefix('partner')->name('partner.')->group(function () {
     Route::get('/dashboard', [PartnerDashboard::class, 'index'])->name('dashboard');
+});
+
+// Dashboard Analytics (dipakai oleh halaman statistik)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('dashboard.index');
 });
 
 // Route Leads Management
@@ -69,15 +77,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-});
-
-Route::middleware(['auth'])->group(function () {
     // Admin Lead Assignment
     Route::post('/lead-assignments', [LeadAssignmentController::class, 'store'])->name('lead-assignments.store');
-
-    // Portal Partner
-    Route::get('/partner/leads', [PartnerLeadController::class, 'index'])->name('partner.leads.index');
 
     // Portal Partner
     Route::get('/partner/leads', [PartnerLeadController::class, 'index'])->name('partner.leads.index');

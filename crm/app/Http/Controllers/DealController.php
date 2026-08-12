@@ -38,17 +38,20 @@ class DealController extends Controller
 
     public function update(Request $request, Deal $deal)
     {
-        // Proteksi Otorisasi: Hanya pemilik deal / admin yang boleh update
-        if (Auth::id() !== $deal->user_id && Auth::user()->role !== 'admin') {
-            abort(403);
+        $user = auth()->user();
+        if ($user->role !== 'admin') {
+            abort_unless($deal->user_id === $user->id, 403);
         }
 
         $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'deal_value' => 'sometimes|required|numeric|min:0',
             'stage' => 'required|in:qualification,proposal,negotiation,closed_won,closed_lost',
+            'expected_close_date' => 'nullable|date',
         ]);
 
         $deal->update($validated);
 
-        return redirect()->route('deals.index');
+        return redirect()->route('deals.index')->with('success', 'Deal berhasil diperbarui.');
     }
 }

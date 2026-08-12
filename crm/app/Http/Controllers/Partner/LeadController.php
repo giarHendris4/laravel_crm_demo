@@ -26,7 +26,7 @@ class LeadController extends Controller
         );
 
         $validated = $request->validate([
-            'status' => 'required|in:new,contacted,qualified,proposal,won,lost',
+            'status' => 'required|in:new,contacted,proposal,negotiation,won,lost',
         ]);
 
         $lead->update([
@@ -34,5 +34,19 @@ class LeadController extends Controller
         ]);
 
         return back()->with('success', 'Status lead berhasil diperbarui.');
+    }
+
+    public function show(Lead $lead)
+    {
+        $user = auth()->user();
+    
+        // Pengecekan Akses: Admin bebas, Sales/Partner hanya bisa lihat milik sendiri/yang ditugaskan
+        if ($user->role === 'sales') {
+            abort_unless($lead->user_id === $user->id, 403, 'Akses ditolak.');
+        } elseif ($user->role === 'partner') {
+            abort_unless($user->assignedLeads()->where('lead_id', $lead->id)->exists(), 403, 'Akses ditolak.');
+        }
+    
+        return view('leads.show', compact('lead'));
     }
 }
